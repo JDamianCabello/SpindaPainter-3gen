@@ -493,8 +493,22 @@
         }
 
         function handlePIDInput(e) {
-            const newPid = cleanPid(e.target.value);
+            const newPid = e.target.value;
+            pid = newPid;
+
+            if (!isPidValid(newPid)) {
+                return;
+            }
+
             drawSpindaBasedOnPid(newPid, e.target);
+        }
+
+        function handlePIDBlur(e) {
+            if (isPidValid(pid)) {
+                return;
+            }
+
+            drawSpindaBasedOnPid(pid, e.target);
         }
 
         function drawSpindaBasedOnPid(newPid, target) {
@@ -562,6 +576,7 @@
 
             // Eventos de la interfaz existentes
             pidInput.addEventListener('input', handlePIDInput);
+            pidInput.addEventListener('blur', handlePIDBlur);
             gridCheck.addEventListener('change', handleGridToggle);
 
             // Prevenir comportamientos por defecto
