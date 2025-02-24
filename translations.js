@@ -7,6 +7,7 @@ const TRANSLATIONS = {
         gridLabel: "Mostrar cuadrícula",
         aboutButtonText: "Acerca de",
         authorText: "Creado por JDamianCabello",
+        sourceCodeText: "Ver código fuente",
         modal: {
             title: "Sobre Spinda Painter",
             description: "Spinda Painter es una herramienta web inspirada en el Spinda Painter original de la tercera generación (Gen III) de Pokémon.",
@@ -63,6 +64,7 @@ const TRANSLATIONS = {
         gridLabel: "Show Grid",
         aboutButtonText: "About",
         authorText: "Created by JDamianCabello",
+        sourceCodeText: "View source code",
         modal: {
             title: "About Spinda Painter",
             description: "Spinda Painter is a web tool inspired by the original Spinda Painter from the third generation (Gen III) of Pokémon.",
@@ -137,6 +139,11 @@ function changeLanguage(lang) {
     const authorText = document.getElementById('authorText');
     if (authorText) {
         authorText.textContent = TRANSLATIONS[lang].authorText;
+    }
+
+    const sourceCodeLink = document.getElementById('sourceCodeLink');
+    if (sourceCodeLink) {
+        sourceCodeLink.textContent = TRANSLATIONS[lang].sourceCodeText;
     }
     
     // Elementos del modal
