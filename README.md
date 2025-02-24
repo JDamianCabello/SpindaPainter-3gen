@@ -6,7 +6,11 @@
 
 A web tool for customizing and exploring the unique Spinda spot patterns in Pokémon.
 
-![Spinda Painter Preview](screenshot.png)
+### 🌐 Live Demo
+
+👉 [Spinda Painter - Live Demo](https://jdamiancabello.github.io/SpindaPainter-3gen/)
+
+![Spinda Painter Preview](/assets/screenshot.png)
 
 ### 🎮 Features
 
@@ -28,12 +32,16 @@ This project is a tribute to the original Spinda Painter from the third generati
 
 ### 📦 How to Use
 
-1. Clone the repository
+1. Visit the [Live Demo](https://jdamiancabello.github.io/SpindaPainter-3gen/)
+   
+   OR
+
+2. Clone the repository
 ```bash
-git clone https://github.com/JDamianCabello/spinda-painter.git
+git clone https://github.com/JDamianCabello/SpindaPainter-3gen.git
 ```
 
-2. Open the `index.html` file in your browser
+3. Open the `index.html` file in your browser
 
 ### ✨ Main Features
 
@@ -69,7 +77,7 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 ### 🐛 Issues
 
-If you find any bugs or have suggestions, please open an [issue](https://github.com/JDamianCabello/spinda-painter/issues).
+If you find any bugs or have suggestions, please open an [issue](https://github.com/JDamianCabello/SpindaPainter-3gen/issues).
 
 ### 📞 Contact
 
@@ -83,7 +91,11 @@ Enjoy customizing your Spindas! 🎉
 
 Una herramienta web para personalizar y explorar los únicos patrones de manchas de Spinda en Pokémon.
 
-![Spinda Painter Preview](screenshot.png)
+### 🌐 Demo en Vivo
+
+👉 [Spinda Painter - Demo en Vivo](https://jdamiancabello.github.io/SpindaPainter-3gen/)
+
+![Spinda Painter Preview](/assets/screenshot.png)
 
 ### 🎮 Características
 
@@ -105,12 +117,16 @@ Este proyecto es un tributo al Spinda Painter original de la tercera generación
 
 ### 📦 Cómo Usar
 
-1. Clona el repositorio
+1. Visita la [Demo en Vivo](https://jdamiancabello.github.io/SpindaPainter-3gen/)
+   
+   O
+
+2. Clona el repositorio
 ```bash
-git clone https://github.com/JDamianCabello/spinda-painter.git
+git clone https://github.com/JDamianCabello/SpindaPainter-3gen.git
 ```
 
-2. Abre el archivo `index.html` en tu navegador
+3. Abre el archivo `index.html` en tu navegador
 
 ### ✨ Funcionalidades Principales
 
@@ -146,7 +162,7 @@ Distribuido bajo la Licencia MIT. Consulta `LICENSE` para obtener más informaci
 
 ### 🐛 Problemas
 
-Si encuentras algún error o tienes sugerencias, por favor abre un [issue](https://github.com/JDamianCabello/spinda-painter/issues).
+Si encuentras algún error o tienes sugerencias, por favor abre un [issue](https://github.com/JDamianCabello/SpindaPainter-3gen/issues).
 
 ### 📞 Contacto
 
