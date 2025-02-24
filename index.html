@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spinda Painter JDamianCabello</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f4f6f9;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .spinda-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .card-header {
+            background-color: #D86226;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .card-header h2 {
+            margin-bottom: 0;
+            font-weight: 600;
+        }
+        .canvas-container {
+            position: relative;
+            width: 512px;
+            height: 512px;
+            transform-origin: top left;
+            transform: scale(1);
+            background-color: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .canvas-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 512px;
+            height: 512px;
+            image-rendering: pixelated;
+        }
+        #resultCanvas {
+            image-rendering: pixelated;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+        }
+        .spot {
+            position: absolute;
+            background-repeat: no-repeat;
+            background-size: contain;
+            cursor: move;
+            z-index: 1;
+            transition: transform 0.1s ease;
+        }
+        .spot:hover {
+            transform: scale(1.05);
+        }
+        #spot1 { width: 96px; height: 96px; }
+        #spot2 { width: 104px; height: 104px; }
+        #spot3 { width: 56px; height: 72px; }
+        #spot4 { width: 64px; height: 72px; }
+        .control-section {
+            background-color: #f1f3f5;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+        .nature-details {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+        .nature-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .form-check-input:checked {
+            background-color: #5c6bc0;
+            border-color: #5c6bc0;
+        }
+        .input-group-text {
+            background-color: #D86226;
+            color: white;
+        }
+        .language-selector {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .language-btn {
+            cursor: pointer;
+            opacity: 0.5;
+            transition: opacity 0.3s ease;
+        }
+        .language-btn.active {
+            opacity: 1;
+        }
+        .author-text {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 0.9rem;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card spinda-container">
+            <div class="card-header">
+                <h2>Spinda Painter III GEN</h2>
+                <div class="language-selector">
+                    <img src="https://flagcdn.com/w20/es.png" alt="Español" class="language-btn" data-lang="es" width="20" height="15">
+                    <img src="https://flagcdn.com/w20/gb.png" alt="English" class="language-btn" data-lang="en" width="20" height="15">
+                    <button id="aboutButton" class="btn btn-sm btn-light ms-2" data-bs-toggle="modal" data-bs-target="#infoModal">
+                        Acerca de
+                    </button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row control-section mb-3">
+                    <div class="col-md-4 mb-2">
+                        <div class="input-group">
+                            <span class="input-group-text" id="pidLabel">PID</span>
+                            <input type="text" 
+                                   id="pidInput" 
+                                   class="form-control" 
+                                   value="88888888" 
+                                   maxlength="8" 
+                                   placeholder="Hex PID">
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-2">
+                        <div class="nature-details">
+                            <div class="nature-badge">
+                                <span class="badge bg-secondary" id="natureLabel">Naturaleza</span>
+                                <span id="natureNameText" class="form-text"></span>
+                            </div>
+                            <div class="nature-badge">
+                                <span class="badge bg-secondary" id="genderLabel">Género</span>
+                                <span id="genderText" class="form-text"></span>
+                            </div>
+                            <div class="nature-badge">
+                                <span class="badge bg-secondary" id="abilityLabel">Habilidad</span>
+                                <span id="abilityText" class="form-text"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-2">
+                        <div class="form-check form-switch">
+                            <input type="checkbox" 
+                                   id="gridCheck" 
+                                   class="form-check-input">
+                            <label class="form-check-label" id="gridLabel" for="gridCheck">
+                                Mostrar cuadrícula
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row justify-content-center">
+                    <div class="col-auto d-flex flex-column align-items-center gap-3">
+                      <div class="canvas-container">
+                        <canvas id="baseCanvas" width="64" height="64" class="canvas-layer"></canvas>
+                        <div id="spot1" class="spot"></div>
+                        <div id="spot2" class="spot"></div>
+                        <div id="spot3" class="spot"></div>
+                        <div id="spot4" class="spot"></div>
+                        <canvas id="gridCanvas" width="512" height="512" class="canvas-layer"></canvas>
+                      </div>
+                      <canvas id="resultCanvas" width="64" height="64" class=""></canvas>
+                      <div id="authorText" class="author-text">Creado por JDamianCabello</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Información -->
+    <div class="modal fade" id="infoModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 id="modalTitle" class="modal-title">Sobre Spinda Painter</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p id="modalDescription">Spinda Painter es una herramienta web inspirada en el Spinda Painter original de la tercera generación (Gen III) de Pokémon.</p>
+                    
+                    <h6 id="modalWhatIsTitle">¿Qué es Spinda Painter?</h6>
+                    <p id="modalWhatIsDescription">Es una aplicación que te permite personalizar las manchas de un Spinda basándote en su PID (Personal Identification). Cada Spinda tiene un patrón de manchas único determinado por su identificador.</p>
+                    
+                    <h6 id="modalFeaturesTitle">Características</h6>
+                    <ul id="modalFeaturesList">
+                        <li>Modifica la posición de las manchas de Spinda</li>
+                        <li>Visualiza en tiempo real los cambios</li>
+                        <li>Obtén información sobre la naturaleza, género y habilidad</li>
+                    </ul>
+                    
+                    <p id="modalAdditionalNote" class="text-muted">Originalmente, la herramienta estaba en chino y el sitio web original ha caído. Esta versión web busca preservar la funcionalidad del Spinda Painter.exe original de la tercera generación.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script src="assets.js"></script>
+    <script src="translations.js"></script>
+    <script>
+
+        window.addEventListener('load', () => {
+            setupLanguageSelection();
+        });
+        // Constantes
+        const MAGNIFICATION = 8;
+        const SPINDA_COLOR = { r: 175, g: 222, b: 107, a: 57 };
+        const BASE_COORDS = [0, 0, 24, 1, 6, 18, 18, 19];
+        const ORIGIN = [8, 6];
+        const CONTAINER_SCALE = 1/MAGNIFICATION;
+
+        // Variables globales
+        let pid = "88888888";
+        let showGrid = false;
+        let spots = Array(4).fill().map(() => ({ x: 0, y: 0 }));
+        let draggingSpot = null;
+        let mouseOffset = { x: 0, y: 0 };
+        let lower = new Array(8);
+        let upper = new Array(8);
+
+        // Referencias a elementos
+        const baseCanvas = document.getElementById('baseCanvas');
+        const gridCanvas = document.getElementById('gridCanvas');
+        const resultCanvas = document.getElementById('resultCanvas');
+        const pidInput = document.getElementById('pidInput');
+        const gridCheck = document.getElementById('gridCheck');
+        const natureText = document.getElementById('natureText');
+        const spotElements = [
+            document.getElementById('spot1'),
+            document.getElementById('spot2'),
+            document.getElementById('spot3'),
+            document.getElementById('spot4')
+        ];
+
+        // Inicializar límites
+        function initLimits() {
+            for (let i = 0; i < 4; i++) {
+                lower[2 * i] = (BASE_COORDS[2 * i] + ORIGIN[0]) * MAGNIFICATION;
+                lower[2 * i + 1] = (BASE_COORDS[2 * i + 1] + ORIGIN[1]) * MAGNIFICATION;
+                upper[2 * i] = (15 + BASE_COORDS[2 * i] + ORIGIN[0]) * MAGNIFICATION;
+                upper[2 * i + 1] = (15 + BASE_COORDS[2 * i + 1] + ORIGIN[1]) * MAGNIFICATION;
+            }
+        }
+
+        async function drawBaseSpinda() {
+            const baseCtx = baseCanvas.getContext('2d');
+            const img = new Image();
+            img.src = SPINDA_ASSETS.baseSpinda;
+            await new Promise(resolve => img.onload = resolve);
+            baseCtx.clearRect(0, 0, 64, 64);
+            baseCtx.drawImage(img, 0, 0, 64, 64);
+        }
+
+        function drawGrid() {
+            const ctx = gridCanvas.getContext('2d');
+            ctx.clearRect(0, 0, 512, 512);
+            if (!showGrid) return;
+
+            ctx.strokeStyle = 'rgba(0, 0, 0, 0.2)';
+            ctx.lineWidth = 1;
+
+            // Líneas verticales
+            for (let i = 0; i < 64; i++) {
+                const x = i * MAGNIFICATION;
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, 512);
+                ctx.stroke();
+            }
+
+            // Líneas horizontales
+            for (let i = 0; i < 64; i++) {
+                const y = i * MAGNIFICATION;
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(512, y);
+                ctx.stroke();
+            }
+        }
+
+        async function drawResult() {
+            const ctx = resultCanvas.getContext('2d');
+            ctx.clearRect(0, 0, 64, 64);
+
+            // Dibujar Spinda base
+            const baseImg = new Image();
+            baseImg.src = SPINDA_ASSETS.baseSpinda;
+            await new Promise(resolve => baseImg.onload = resolve);
+            ctx.drawImage(baseImg, 0, 0, 64, 64);
+
+            // Dibujar manchas
+            const spotImages = await Promise.all([
+                loadImage(SPINDA_ASSETS.spotResult1),
+                loadImage(SPINDA_ASSETS.spotResult2),
+                loadImage(SPINDA_ASSETS.spotResult3),
+                loadImage(SPINDA_ASSETS.spotResult4)
+            ]);
+
+            spots.forEach((spot, i) => {
+                const x = Math.floor(spot.x / MAGNIFICATION);
+                const y = Math.floor(spot.y / MAGNIFICATION);
+                ctx.drawImage(spotImages[i], x, y);
+            });
+        }
+
+        function setSpot(spotElement, index) {
+            const xOffset = (parseInt(pid, 16) >> (index * 8)) & 0x0F;
+            const yOffset = (parseInt(pid, 16) >> (index * 8 + 4)) & 0x0F;
+            
+            const x = (xOffset + BASE_COORDS[2 * index] + ORIGIN[0]) * MAGNIFICATION;
+            const y = (yOffset + BASE_COORDS[2 * index + 1] + ORIGIN[1]) * MAGNIFICATION;
+            
+            spotElement.style.left = x + 'px';
+            spotElement.style.top = y + 'px';
+            spotElement.style.backgroundImage = `url(${SPINDA_ASSETS['spot' + (index + 1)]})`;
+            
+            spots[index] = { x, y };
+        }
+
+        // Event Handlers
+        function handleMouseDown(e, index) {
+            if (e.button === 0) {
+                const containerRect = document.querySelector('.canvas-container').getBoundingClientRect();
+                draggingSpot = index;
+                mouseOffset = {
+                    x: e.clientX - containerRect.left - parseInt(spotElements[index].style.left),
+                    y: e.clientY - containerRect.top - parseInt(spotElements[index].style.top)
+                };
+            }
+        }
+
+        function handleMouseMove(e) {
+            if (draggingSpot === null) return;
+            
+            const spot = spotElements[draggingSpot]; // Obtener el elemento correcto usando el índice
+            const containerRect = document.querySelector('.canvas-container').getBoundingClientRect();
+            
+            let x = e.clientX - containerRect.left - mouseOffset.x;
+            let y = e.clientY - containerRect.top - mouseOffset.y;
+
+            x = x * (1/MAGNIFICATION);
+            y = y * (1/MAGNIFICATION);
+
+            // Convertir a coordenadas de cuadrícula
+            x = Math.floor(x) * MAGNIFICATION;
+            y = Math.floor(y) * MAGNIFICATION;
+
+            // Aplicar límites
+            x = Math.max(lower[draggingSpot * 2], Math.min(upper[draggingSpot * 2], x));
+            y = Math.max(lower[draggingSpot * 2 + 1], Math.min(upper[draggingSpot * 2 + 1], y));
+
+            // Actualizar posición del spot
+            spot.style.left = x + 'px';
+            spot.style.top = y + 'px';
+            spots[draggingSpot] = { x, y };
+
+            // Actualizar PID y resultado
+            updatePIDFromSpots();
+            drawResult();
+            updateNatureText();
+        }
+
+        function handleMouseUp() {
+            draggingSpot = null;
+        }
+
+        function updatePIDFromSpots() {
+            let newPID = 0n;
+            
+            spots.forEach((spot, index) => {
+                const x = Math.floor(spot.x / MAGNIFICATION);
+                const y = Math.floor(spot.y / MAGNIFICATION);
+                
+                const xOffset = x - (BASE_COORDS[index * 2] + ORIGIN[0]);
+                const yOffset = y - (BASE_COORDS[index * 2 + 1] + ORIGIN[1]);
+                
+                const shift = BigInt(index * 8);
+                newPID |= BigInt(xOffset & 0x0F) << shift;
+                newPID |= BigInt(yOffset & 0x0F) << (shift + 4n);
+            });
+            
+            pid = newPID.toString(16).padStart(8, '0').toUpperCase();
+            pidInput.value = pid;
+        }
+
+        function handlePIDInput(e) {
+            const newPid = e.target.value.replace(/[^0-9A-Fa-f]/g, '').toUpperCase();
+            if (newPid.length <= 8) {
+                pid = newPid.padStart(8, '0');
+                e.target.value = pid;
+                spotElements.forEach((spot, index) => setSpot(spot, index));
+                drawResult();
+                updateNatureText();
+            }
+        }
+
+        function handleGridToggle(e) {
+            showGrid = e.target.checked;
+            drawGrid();
+        }
+
+        function updateNatureText() {
+            const pidNum = parseInt(pid, 16);
+            const lang = currentLanguage;
+            
+            const nature = TRANSLATIONS[lang].natures[pidNum % 25];
+            const gender = (pidNum & 0xff) < 0x7f ? 
+                TRANSLATIONS[lang].genders.female : 
+                TRANSLATIONS[lang].genders.male;
+            const ability = (pidNum & 1) === 0 ? 
+                TRANSLATIONS[lang].abilities.ownTempo : 
+                TRANSLATIONS[lang].abilities.runAway;
+            
+            const natureNameText = document.getElementById('natureNameText');
+            const genderText = document.getElementById('genderText');
+            const abilityText = document.getElementById('abilityText');
+            
+            natureNameText.textContent = nature.name;
+            genderText.textContent = gender;
+            abilityText.textContent = ability;
+        }
+
+        // Función de carga de imagen helper
+        function loadImage(src) {
+            return new Promise((resolve) => {
+                const img = new Image();
+                img.onload = () => resolve(img);
+                img.src = src;
+            });
+        }
+
+        function setupEventListeners() {
+            // Eventos de los spots
+            spotElements.forEach((spot, index) => {
+                spot.addEventListener('mousedown', (e) => handleMouseDown(e, index));
+            });
+            document.addEventListener('mousemove', handleMouseMove);
+            document.addEventListener('mouseup', handleMouseUp);
+
+            // Eventos de la interfaz
+            pidInput.addEventListener('input', handlePIDInput);
+            gridCheck.addEventListener('change', handleGridToggle);
+
+            // Prevenir comportamientos por defecto
+            spotElements.forEach(spot => {
+                spot.addEventListener('dragstart', (e) => e.preventDefault());
+            });
+        }
+
+        // Inicialización de imágenes
+        async function preloadImages() {
+            const imagePromises = [
+                loadImage(SPINDA_ASSETS.baseSpinda),
+                loadImage(SPINDA_ASSETS.spot1),
+                loadImage(SPINDA_ASSETS.spot2),
+                loadImage(SPINDA_ASSETS.spot3),
+                loadImage(SPINDA_ASSETS.spot4),
+                loadImage(SPINDA_ASSETS.spotResult1),
+                loadImage(SPINDA_ASSETS.spotResult2),
+                loadImage(SPINDA_ASSETS.spotResult3),
+                loadImage(SPINDA_ASSETS.spotResult4)
+            ];
+            
+            await Promise.all(imagePromises);
+        }
+
+        // Función de inicialización principal
+        async function initSpindaPainter() {
+            try {
+                // Inicializar límites
+                initLimits();
+
+                // Esperar a que todas las imágenes estén cargadas
+                await preloadImages();
+                
+                // Configurar el estado inicial
+                await drawBaseSpinda();
+                spotElements.forEach((spot, index) => setSpot(spot, index));
+                
+                // Configurar eventos
+                setupEventListeners();
+                
+                // Dibujar el estado inicial
+                drawGrid();
+                await drawResult();
+                
+                // Configurar el estado de la interfaz
+                pidInput.value = pid;
+                gridCheck.checked = showGrid;
+                updateNatureText();
+
+            } catch (error) {
+                console.error('Error initializing Spinda Painter:', error);
+            }
+        }
+
+        // Iniciar la aplicación cuando se carga la página
+        window.addEventListener('load', initSpindaPainter);
+    </script>
+</body>
+</html>
