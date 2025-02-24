@@ -388,6 +388,54 @@
             draggingSpot = null;
         }
 
+        function handleTouchStart(e, index) {
+            e.preventDefault(); // Prevenir el scroll mientras se arrastra
+            const touch = e.touches[0];
+            const containerRect = document.querySelector('.canvas-container').getBoundingClientRect();
+            draggingSpot = index;
+            mouseOffset = {
+                x: touch.clientX - containerRect.left - parseInt(spotElements[index].style.left),
+                y: touch.clientY - containerRect.top - parseInt(spotElements[index].style.top)
+            };
+        }
+
+        function handleTouchMove(e) {
+            if (draggingSpot === null) return;
+            e.preventDefault(); // Prevenir el scroll mientras se arrastra
+            
+            const touch = e.touches[0];
+            const spot = spotElements[draggingSpot];
+            const containerRect = document.querySelector('.canvas-container').getBoundingClientRect();
+            
+            let x = touch.clientX - containerRect.left - mouseOffset.x;
+            let y = touch.clientY - containerRect.top - mouseOffset.y;
+
+            x = x * (1/MAGNIFICATION);
+            y = y * (1/MAGNIFICATION);
+
+            // Convertir a coordenadas de cuadrícula
+            x = Math.floor(x) * MAGNIFICATION;
+            y = Math.floor(y) * MAGNIFICATION;
+
+            // Aplicar límites
+            x = Math.max(lower[draggingSpot * 2], Math.min(upper[draggingSpot * 2], x));
+            y = Math.max(lower[draggingSpot * 2 + 1], Math.min(upper[draggingSpot * 2 + 1], y));
+
+            // Actualizar posición del spot
+            spot.style.left = x + 'px';
+            spot.style.top = y + 'px';
+            spots[draggingSpot] = { x, y };
+
+            // Actualizar PID y resultado
+            updatePIDFromSpots();
+            drawResult();
+            updateNatureText();
+        }
+
+        function handleTouchEnd(e) {
+            draggingSpot = null;
+        }
+
         function updatePIDFromSpots() {
             let newPID = 0n;
             
@@ -454,14 +502,20 @@
         }
 
         function setupEventListeners() {
-            // Eventos de los spots
+            // Eventos del ratón existentes
             spotElements.forEach((spot, index) => {
                 spot.addEventListener('mousedown', (e) => handleMouseDown(e, index));
+                // Agregar eventos táctiles
+                spot.addEventListener('touchstart', (e) => handleTouchStart(e, index));
             });
             document.addEventListener('mousemove', handleMouseMove);
             document.addEventListener('mouseup', handleMouseUp);
+            // Agregar eventos táctiles al documento
+            document.addEventListener('touchmove', handleTouchMove, { passive: false });
+            document.addEventListener('touchend', handleTouchEnd);
+            document.addEventListener('touchcancel', handleTouchEnd);
 
-            // Eventos de la interfaz
+            // Eventos de la interfaz existentes
             pidInput.addEventListener('input', handlePIDInput);
             gridCheck.addEventListener('change', handleGridToggle);
 
