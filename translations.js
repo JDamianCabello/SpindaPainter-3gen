@@ -53,8 +53,8 @@ const TRANSLATIONS = {
             male: "♂ Macho"
         },
         abilities: {
-            ownTempo: "Ritmo Propio",
-            runAway: "Huída"
+            ownTempo1: "Ritmo Propio (1)",
+            ownTempo2: "Ritmo Propio (2)"
         }
     },
     en: {
@@ -110,8 +110,8 @@ const TRANSLATIONS = {
             male: "♂ Male"
         },
         abilities: {
-            ownTempo: "Own Tempo",
-            runAway: "Run Away"
+            ownTempo1: "Own Tempo (1)",
+            ownTempo2: "Own Tempo (2)"
         }
     }
 };
@@ -202,8 +202,8 @@ function updateNatureText() {
         TRANSLATIONS[lang].genders.female : 
         TRANSLATIONS[lang].genders.male;
     const ability = (pidNum & 1) === 0 ? 
-        TRANSLATIONS[lang].abilities.ownTempo : 
-        TRANSLATIONS[lang].abilities.runAway;
+        TRANSLATIONS[lang].abilities.ownTempo1 : 
+        TRANSLATIONS[lang].abilities.ownTempo2;
     
     const natureNameText = document.getElementById('natureNameText');
     const genderText = document.getElementById('genderText');
