@@ -10,7 +10,7 @@ A web tool for customizing and exploring the unique Spinda spot patterns in Pok�
 
 👉 [Spinda Painter - Live Demo](https://jdamiancabello.github.io/SpindaPainter-3gen/)
 
-![Spinda Painter Preview](/assets/screenshot.png)
+![Spinda Painter Preview](/screenshot.png)
 
 ### 🎮 Features
 
@@ -95,7 +95,7 @@ Una herramienta web para personalizar y explorar los únicos patrones de manchas
 
 👉 [Spinda Painter - Demo en Vivo](https://jdamiancabello.github.io/SpindaPainter-3gen/)
 
-![Spinda Painter Preview](/assets/screenshot.png)
+![Spinda Painter Preview](/screenshot.png)
 
 ### 🎮 Características
 
