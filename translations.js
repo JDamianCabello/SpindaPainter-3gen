@@ -1,6 +1,9 @@
 // Constantes de traducción
 const TRANSLATIONS = {
     es: {
+        pidCopyLabel: "Copiar al portapapeles",
+        pidCopiedText: "PID copiado al portapapeles",
+        pidRerollButton: "Generar nuevo Spinda",
         natureLabel: "Naturaleza",
         genderLabel: "Género",
         abilityLabel: "Habilidad",
@@ -58,6 +61,9 @@ const TRANSLATIONS = {
         }
     },
     en: {
+        pidCopyLabel: "Copy to clipboard",
+        pidCopiedText: "PID copied to clipboard",
+        pidRerollButton: "Reroll Spinda",
         natureLabel: "Nature",
         genderLabel: "Gender",
         abilityLabel: "Ability",
@@ -124,6 +130,8 @@ function changeLanguage(lang) {
     currentLanguage = lang;
     
     // Elementos de interfaz principal
+    document.getElementById('pidCopyLabel').textContent = TRANSLATIONS[lang].pidCopyLabel;
+    document.getElementById('pidRerollButton').textContent = TRANSLATIONS[lang].pidRerollButton;
     document.getElementById('natureLabel').textContent = TRANSLATIONS[lang].natureLabel;
     document.getElementById('genderLabel').textContent = TRANSLATIONS[lang].genderLabel;
     document.getElementById('abilityLabel').textContent = TRANSLATIONS[lang].abilityLabel;
