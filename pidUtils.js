@@ -42,13 +42,13 @@ function generateRandomPid() {
 }
 
 function cleanPid(pid) {
-    console.log(pid);
     // Si el PID está vacío, generamos un PID de 8 ochos (el por defecto para que se ponga encima)
-    pid ||= '';
+    pid ||= ''.padStart(8, '8');
 
+    // Rellenamos con 0s a la izquierda, por si el PID calculado es menor a 0x10000000
     return pid.replace(CHARS_NOT_IN_HEX_REGEX, '')
         .toUpperCase()
-        .padStart(8, '8');
+        .padStart(8, '0');
 }
 
 function isPidValid(pid) {
