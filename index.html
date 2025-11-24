@@ -1,0 +1,1369 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spinda Painter JDamianCabello</title>
+
+    <!-- Favicons -->
+    <link rel="icon" type="image/x-icon" href="assets/images/favicon.ico">
+    <link rel="icon" type="image/png" sizes="16x16" href="assets/images/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/images/favicon-32x32.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/images/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="assets/images/android-chrome-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="assets/images/android-chrome-512x512.png">
+    <link rel="manifest" href="site.webmanifest">
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #E85D04;
+            --primary-dark: #D14B00;
+            --primary-light: #FF7B2E;
+            --secondary: #5B4FCF;
+            --secondary-light: #7C71E8;
+            --accent: #FFB800;
+            --radius: 16px;
+            --radius-sm: 10px;
+            --transition: all 0.25s ease;
+        }
+
+        /* Dark theme (default) */
+        [data-theme="dark"] {
+            --bg-body: #0F0F1A;
+            --bg-card: #1A1A2E;
+            --bg-card-light: #252542;
+            --bg-input: #0F0F1A;
+            --text-primary: #FFFFFF;
+            --text-secondary: #A0A0B8;
+            --border-color: rgba(255, 255, 255, 0.1);
+            --shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+            --overlay-bg: rgba(15, 15, 26, 0.85);
+            --grid-color: rgba(255, 255, 255, 0.15);
+            --canvas-bg: linear-gradient(145deg, #1e1e32 0%, #151528 100%);
+            --header-bg: linear-gradient(135deg, var(--secondary) 0%, var(--secondary-light) 100%);
+            --badge-bg: linear-gradient(135deg, var(--secondary) 0%, var(--secondary-light) 100%);
+            --badge-shadow: rgba(91, 79, 207, 0.3);
+            --btn-bg: linear-gradient(135deg, var(--secondary) 0%, var(--secondary-light) 100%);
+            --btn-bg-hover: linear-gradient(135deg, var(--secondary-light) 0%, var(--secondary) 100%);
+            --btn-shadow: rgba(91, 79, 207, 0.4);
+            --modal-accent: var(--secondary-light);
+        }
+
+        /* Light theme */
+        [data-theme="light"] {
+            --bg-body: #F0F2F5;
+            --bg-card: #FFFFFF;
+            --bg-card-light: #F8F9FA;
+            --bg-input: #FFFFFF;
+            --text-primary: #1A1A2E;
+            --text-secondary: #5A5A72;
+            --border-color: rgba(0, 0, 0, 0.1);
+            --shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            --overlay-bg: rgba(240, 242, 245, 0.9);
+            --grid-color: rgba(0, 0, 0, 0.1);
+            --canvas-bg: linear-gradient(145deg, #FFFFFF 0%, #F0F2F5 100%);
+            --header-bg: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            --badge-bg: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            --badge-shadow: rgba(232, 93, 4, 0.3);
+            --btn-bg: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            --btn-bg-hover: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 100%);
+            --btn-shadow: rgba(232, 93, 4, 0.4);
+            --modal-accent: var(--primary);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: url('assets/images/background.jpg') no-repeat center center fixed;
+            background-size: cover;
+            min-height: 100vh;
+            color: var(--text-primary);
+            line-height: 1.5;
+            transition: var(--transition);
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: var(--overlay-bg);
+            z-index: -1;
+            transition: var(--transition);
+        }
+
+        /* Layout */
+        .app-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 1.5rem;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            transition: var(--transition);
+        }
+
+        /* Header */
+        .header {
+            background: var(--header-bg);
+            padding: 1.25rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .header h1 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            color: #FFFFFF;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .language-btn {
+            width: 24px;
+            height: 18px;
+            border-radius: 3px;
+            cursor: pointer;
+            opacity: 0.5;
+            transition: var(--transition);
+            border: 2px solid transparent;
+        }
+
+        .language-btn:hover {
+            opacity: 0.8;
+            transform: scale(1.1);
+        }
+
+        .language-btn.active {
+            opacity: 1;
+            border-color: white;
+        }
+
+        /* Theme Toggle */
+        .theme-toggle {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+            font-size: 1.1rem;
+        }
+
+        .theme-toggle:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
+
+        .theme-toggle .icon-sun,
+        .theme-toggle .icon-moon {
+            display: none;
+        }
+
+        [data-theme="dark"] .theme-toggle .icon-sun {
+            display: block;
+        }
+
+        [data-theme="light"] .theme-toggle .icon-moon {
+            display: block;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            font-family: inherit;
+        }
+
+        .btn-light {
+            background: rgba(255, 255, 255, 0.95);
+            color: var(--primary-dark);
+        }
+
+        .btn-light:hover {
+            background: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-primary {
+            background: var(--btn-bg);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--btn-bg-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px var(--btn-shadow);
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: 1.5rem;
+        }
+
+        /* Controls Grid */
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            background: var(--bg-card-light);
+            padding: 1.25rem;
+            border-radius: var(--radius-sm);
+            transition: var(--transition);
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        /* Input styles */
+        .input-wrapper {
+            display: flex;
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .input-label {
+            background: var(--btn-bg);
+            color: white;
+            padding: 0.6rem 0.8rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .input-label:hover {
+            background: var(--btn-bg-hover);
+        }
+
+        .input-field {
+            flex: 1;
+            padding: 0.6rem 0.8rem;
+            border: none;
+            background: var(--bg-input);
+            color: var(--text-primary);
+            font-size: 0.9rem;
+            font-family: 'Monaco', 'Consolas', monospace;
+            min-width: 0;
+            transition: var(--transition);
+        }
+
+        .input-field:focus {
+            outline: none;
+            filter: brightness(0.95);
+        }
+
+        .input-field::placeholder {
+            color: var(--text-secondary);
+        }
+
+        .btn-reroll {
+            width: 100%;
+            padding: 0.6rem;
+            margin-top: 0.5rem;
+        }
+
+        /* Stats */
+        .stats {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+        }
+
+        .stat-row {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .stat-badge {
+            background: var(--badge-bg);
+            color: #FFFFFF;
+            padding: 0.3rem 0.6rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            min-width: 70px;
+            text-align: center;
+            box-shadow: 0 2px 4px var(--badge-shadow);
+            transition: var(--transition);
+        }
+
+        .stat-value {
+            color: var(--text-primary);
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        /* Toggle */
+        .toggle-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            cursor: pointer;
+        }
+
+        .toggle {
+            position: relative;
+            width: 44px;
+            height: 24px;
+            background: var(--bg-body);
+            border-radius: 12px;
+            transition: var(--transition);
+        }
+
+        .toggle::after {
+            content: '';
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 18px;
+            height: 18px;
+            background: var(--text-secondary);
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+
+        .toggle-input {
+            display: none;
+        }
+
+        .toggle-input:checked + .toggle {
+            background: var(--secondary);
+        }
+
+        .toggle-input:checked + .toggle::after {
+            transform: translateX(20px);
+            background: white;
+        }
+
+        .toggle-label {
+            font-size: 0.9rem;
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        /* Canvas Area */
+        .canvas-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .canvas-wrapper {
+            width: 100%;
+            max-width: 512px;
+            aspect-ratio: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .canvas-container {
+            position: relative;
+            width: 512px;
+            height: 512px;
+            background: var(--canvas-bg);
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: inset 0 2px 20px rgba(0, 0, 0, 0.1);
+            transition: var(--transition);
+        }
+
+        .canvas-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 512px;
+            height: 512px;
+            image-rendering: pixelated;
+        }
+
+        .spot {
+            position: absolute;
+            background-repeat: no-repeat;
+            background-size: contain;
+            cursor: move;
+            z-index: 1;
+            transition: filter 0.15s ease;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+        }
+
+        .spot:hover {
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.5)) brightness(1.1);
+        }
+
+        #spot1 { width: 96px; height: 96px; }
+        #spot2 { width: 104px; height: 104px; }
+        #spot3 { width: 56px; height: 72px; }
+        #spot4 { width: 64px; height: 72px; }
+
+        /* Result Canvas */
+        #resultCanvas {
+            image-rendering: pixelated;
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            background: var(--bg-card-light);
+            transition: var(--transition), border-color 0.25s ease;
+        }
+
+        #resultCanvas:hover {
+            border-color: var(--accent);
+            box-shadow: 0 0 20px rgba(255, 184, 0, 0.3);
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 1rem;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            border-top: 1px solid var(--border-color);
+            transition: var(--transition);
+        }
+
+        /* Tooltip */
+        .tooltip {
+            position: absolute;
+            bottom: calc(100% + 10px);
+            left: 50%;
+            transform: translateX(-50%) translateY(5px);
+            background: var(--bg-card);
+            color: var(--text-primary);
+            padding: 0.5rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border-color);
+            z-index: 100;
+        }
+
+        .tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 6px solid transparent;
+            border-top-color: var(--bg-card);
+        }
+
+        .input-label:hover .tooltip {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+            padding: 1rem;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            max-width: 500px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            transform: scale(0.9);
+            transition: var(--transition);
+        }
+
+        .modal-overlay.active .modal {
+            transform: scale(1);
+        }
+
+        .modal-header {
+            background: var(--header-bg);
+            padding: 1.25rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .modal-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            opacity: 0.8;
+            transition: var(--transition);
+            line-height: 1;
+        }
+
+        .modal-close:hover {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .modal-body h3 {
+            color: var(--modal-accent);
+            font-size: 1rem;
+            margin: 1.25rem 0 0.5rem;
+        }
+
+        .modal-body p, .modal-body li {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .modal-body ul {
+            padding-left: 1.25rem;
+            margin: 0.5rem 0;
+        }
+
+        .modal-body li {
+            margin: 0.25rem 0;
+        }
+
+        .modal-body .note {
+            font-style: italic;
+            opacity: 0.8;
+            margin-top: 1rem;
+        }
+
+        .modal-footer {
+            padding: 1rem 1.5rem;
+            text-align: center;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .btn-secondary {
+            background: var(--btn-bg);
+            color: white;
+            box-shadow: 0 4px 15px var(--btn-shadow);
+        }
+
+        .btn-secondary:hover {
+            background: var(--btn-bg-hover);
+            transform: translateY(-2px);
+        }
+
+        /* Fullscreen button */
+        .fullscreen-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            background: var(--btn-bg);
+            border: none;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            transition: var(--transition);
+            z-index: 10;
+            box-shadow: 0 4px 15px var(--btn-shadow);
+        }
+
+        .fullscreen-btn:hover {
+            background: var(--btn-bg-hover);
+            transform: scale(1.1);
+        }
+
+        /* Fullscreen overlay */
+        .fullscreen-overlay {
+            position: fixed;
+            inset: 0;
+            background: var(--bg-body);
+            z-index: 2000;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .fullscreen-overlay.active {
+            display: flex;
+        }
+
+        .fullscreen-overlay .canvas-container {
+            width: min(95vw, 95vh);
+            height: min(95vw, 95vh);
+            max-width: 800px;
+            max-height: 800px;
+        }
+
+        .fullscreen-overlay .canvas-layer {
+            width: 100%;
+            height: 100%;
+            image-rendering: pixelated;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: crisp-edges;
+        }
+
+        .fullscreen-overlay #fullscreenSpot1 { width: 18.75%; height: 18.75%; }
+        .fullscreen-overlay #fullscreenSpot2 { width: 20.3%; height: 20.3%; }
+        .fullscreen-overlay #fullscreenSpot3 { width: 10.9%; height: 14%; }
+        .fullscreen-overlay #fullscreenSpot4 { width: 12.5%; height: 14%; }
+
+        .fullscreen-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: var(--primary);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+            transition: var(--transition);
+        }
+
+        .fullscreen-close:hover {
+            background: var(--primary-dark);
+            transform: scale(1.1);
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .app-container {
+                padding: 0.75rem;
+            }
+
+            .header {
+                padding: 1rem;
+            }
+
+            .header h1 {
+                font-size: 1.1rem;
+            }
+
+            .main-content {
+                padding: 1rem;
+            }
+
+            .controls {
+                grid-template-columns: 1fr;
+                padding: 1rem;
+            }
+
+            .canvas-wrapper {
+                max-width: 100%;
+            }
+
+            .canvas-container {
+                width: 100%;
+                height: auto;
+                aspect-ratio: 1;
+            }
+
+            .canvas-layer {
+                width: 100%;
+                height: 100%;
+            }
+
+            .spot {
+                transform-origin: top left;
+            }
+
+            #spot1 { width: 18.75%; height: 18.75%; }
+            #spot2 { width: 20.3%; height: 20.3%; }
+            #spot3 { width: 10.9%; height: 14%; }
+            #spot4 { width: 12.5%; height: 14%; }
+        }
+
+        @media (max-width: 400px) {
+            .header h1 {
+                font-size: 1rem;
+            }
+
+            .btn {
+                padding: 0.4rem 0.75rem;
+                font-size: 0.8rem;
+            }
+
+            .stat-badge {
+                min-width: 60px;
+                font-size: 0.7rem;
+            }
+        }
+    </style>
+</head>
+<body data-theme="dark">
+    <div class="app-container">
+        <div class="card">
+            <header class="header">
+                <h1>Spinda Painter III GEN</h1>
+                <div class="header-actions">
+                    <img src="https://flagcdn.com/w20/es.png" alt="Español" class="language-btn" data-lang="es" width="24" height="18">
+                    <img src="https://flagcdn.com/w20/gb.png" alt="English" class="language-btn" data-lang="en" width="24" height="18">
+                    <button class="theme-toggle" id="themeToggle" title="Cambiar tema">
+                        <span class="icon-sun">☀️</span>
+                        <span class="icon-moon">🌙</span>
+                    </button>
+                    <button class="btn btn-light" id="aboutButton">Acerca de</button>
+                </div>
+            </header>
+
+            <main class="main-content">
+                <div class="controls">
+                    <div class="control-group">
+                        <div class="input-wrapper">
+                            <div class="input-label" id="pidButton">
+                                PID
+                                <span class="tooltip" id="pidCopyLabel">Copiar al portapapeles</span>
+                            </div>
+                            <input type="text" id="pidInput" class="input-field" maxlength="8" placeholder="Hex PID">
+                        </div>
+                        <button class="btn btn-primary btn-reroll" id="pidRerollButton">Generar nuevo Spinda</button>
+                    </div>
+
+                    <div class="control-group">
+                        <div class="stats">
+                            <div class="stat-row">
+                                <span class="stat-badge" id="natureLabel">Naturaleza</span>
+                                <span class="stat-value" id="natureNameText"></span>
+                            </div>
+                            <div class="stat-row">
+                                <span class="stat-badge" id="genderLabel">Género</span>
+                                <span class="stat-value" id="genderText"></span>
+                            </div>
+                            <div class="stat-row">
+                                <span class="stat-badge" id="abilityLabel">Habilidad</span>
+                                <span class="stat-value" id="abilityText"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label class="toggle-wrapper">
+                            <input type="checkbox" class="toggle-input" id="gridCheck">
+                            <span class="toggle"></span>
+                            <span class="toggle-label" id="gridLabel">Mostrar cuadrícula</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="canvas-area">
+                    <div class="canvas-wrapper">
+                        <div class="canvas-container" id="canvasContainer">
+                            <canvas id="baseCanvas" width="64" height="64" class="canvas-layer"></canvas>
+                            <div id="spot1" class="spot"></div>
+                            <div id="spot2" class="spot"></div>
+                            <div id="spot3" class="spot"></div>
+                            <div id="spot4" class="spot"></div>
+                            <canvas id="gridCanvas" width="512" height="512" class="canvas-layer"></canvas>
+                            <button class="fullscreen-btn" id="fullscreenBtn" title="Pantalla completa">⛶</button>
+                        </div>
+                    </div>
+                    <canvas id="resultCanvas" width="64" height="64"></canvas>
+                </div>
+            </main>
+
+            <footer class="footer" id="authorText">Creado por JDamianCabello</footer>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title" id="modalTitle">Sobre Spinda Painter</h2>
+                <button class="modal-close" id="modalClose">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="modalDescription">Spinda Painter es una herramienta web inspirada en el Spinda Painter original de la tercera generación (Gen III) de Pokémon.</p>
+
+                <h3 id="modalWhatIsTitle">¿Qué es Spinda Painter?</h3>
+                <p id="modalWhatIsDescription">Es una aplicación que te permite personalizar las manchas de un Spinda basándote en su PID (Personal Identification). Cada Spinda tiene un patrón de manchas único determinado por su identificador.</p>
+
+                <h3 id="modalFeaturesTitle">Características</h3>
+                <ul id="modalFeaturesList">
+                    <li>Modifica la posición de las manchas de Spinda</li>
+                    <li>Visualiza en tiempo real los cambios</li>
+                    <li>Obtén información sobre la naturaleza, género y habilidad</li>
+                </ul>
+
+                <p class="note" id="modalAdditionalNote">Originalmente, la herramienta estaba en chino y el sitio web original ha caído. Esta versión web busca preservar la funcionalidad del Spinda Painter.exe original de la tercera generación.</p>
+            </div>
+            <div class="modal-footer">
+                <a href="https://github.com/JDamianCabello/SpindaPainter-3gen" target="_blank" class="btn btn-secondary" id="sourceCodeLink">Ver código fuente</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Fullscreen Overlay -->
+    <div class="fullscreen-overlay" id="fullscreenOverlay">
+        <button class="fullscreen-close" id="fullscreenClose">✕</button>
+        <div class="canvas-container" id="fullscreenCanvas">
+            <canvas id="fullscreenBaseCanvas" width="512" height="512" class="canvas-layer"></canvas>
+            <canvas id="fullscreenGridCanvas" width="512" height="512" class="canvas-layer"></canvas>
+        </div>
+    </div>
+
+    <script src="assets.js"></script>
+    <script src="translations.js"></script>
+    <script src="pidUtils.js"></script>
+    <script>
+        window.addEventListener('load', () => {
+            setupLanguageSelection();
+            setupCopyPidToClipboard();
+            setupRerollPid();
+            setupModal();
+            setupThemeToggle();
+            setupFullscreen();
+        });
+
+        // Theme toggle setup
+        function setupThemeToggle() {
+            const themeToggle = document.getElementById('themeToggle');
+            // Use saved theme, or detect system preference if no saved theme exists
+            const savedTheme = localStorage.getItem('theme') ||
+                (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+            document.body.setAttribute('data-theme', savedTheme);
+
+            themeToggle.addEventListener('click', () => {
+                const currentTheme = document.body.getAttribute('data-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                document.body.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+                drawGrid(); // Redraw grid with new theme color
+            });
+        }
+
+        // Modal setup
+        function setupModal() {
+            const aboutBtn = document.getElementById('aboutButton');
+            const modalOverlay = document.getElementById('modalOverlay');
+            const modalClose = document.getElementById('modalClose');
+
+            aboutBtn.addEventListener('click', () => modalOverlay.classList.add('active'));
+            modalClose.addEventListener('click', () => modalOverlay.classList.remove('active'));
+            modalOverlay.addEventListener('click', (e) => {
+                if (e.target === modalOverlay) modalOverlay.classList.remove('active');
+            });
+        }
+
+        // Fullscreen setup
+        function setupFullscreen() {
+            const fullscreenBtn = document.getElementById('fullscreenBtn');
+            const fullscreenOverlay = document.getElementById('fullscreenOverlay');
+            const fullscreenClose = document.getElementById('fullscreenClose');
+
+            // Fullscreen elements
+            const fsBaseCanvas = document.getElementById('fullscreenBaseCanvas');
+            const fsGridCanvas = document.getElementById('fullscreenGridCanvas');
+
+            fullscreenBtn.addEventListener('click', () => {
+                openFullscreen();
+            });
+
+            fullscreenClose.addEventListener('click', () => {
+                fullscreenOverlay.classList.remove('active');
+            });
+
+            fullscreenOverlay.addEventListener('click', (e) => {
+                if (e.target === fullscreenOverlay) {
+                    fullscreenOverlay.classList.remove('active');
+                }
+            });
+
+            // ESC key to close
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && fullscreenOverlay.classList.contains('active')) {
+                    fullscreenOverlay.classList.remove('active');
+                }
+            });
+
+            function openFullscreen() {
+                fullscreenOverlay.classList.add('active');
+                drawFullscreenContent();
+            }
+
+            async function drawFullscreenContent() {
+                const fsBaseCtx = fsBaseCanvas.getContext('2d');
+                fsBaseCtx.clearRect(0, 0, 512, 512);
+
+                // Disable image smoothing for sharp pixel art
+                fsBaseCtx.imageSmoothingEnabled = false;
+
+                // Draw base Spinda at 512x512 scale
+                const baseImg = new Image();
+                baseImg.src = SPINDA_ASSETS.baseSpinda;
+                await new Promise(resolve => baseImg.onload = resolve);
+                fsBaseCtx.drawImage(baseImg, 0, 0, 512, 512);
+
+                // Set composite operation to clip spots to Spinda
+                fsBaseCtx.globalCompositeOperation = 'source-atop';
+
+                // Load and draw spots
+                const spotImages = await Promise.all([
+                    loadImage(SPINDA_ASSETS.spot1),
+                    loadImage(SPINDA_ASSETS.spot2),
+                    loadImage(SPINDA_ASSETS.spot3),
+                    loadImage(SPINDA_ASSETS.spot4)
+                ]);
+
+                spots.forEach((spot, i) => {
+                    fsBaseCtx.drawImage(spotImages[i], spot.x, spot.y);
+                });
+
+                // Reset composite operation
+                fsBaseCtx.globalCompositeOperation = 'source-over';
+
+                // Draw grid siempre visible
+                drawFullscreenGrid(true);
+            }
+
+            function loadImage(src) {
+                return new Promise(resolve => {
+                    const img = new Image();
+                    img.onload = () => resolve(img);
+                    img.src = src;
+                });
+            }
+
+            function drawFullscreenGrid(show) {
+                const ctx = fsGridCanvas.getContext('2d');
+                ctx.clearRect(0, 0, 512, 512);
+                if (!show) return;
+
+                const theme = document.body.getAttribute('data-theme');
+                ctx.strokeStyle = theme === 'dark' ? 'rgba(255, 255, 255, 0.25)' : 'rgba(0, 0, 0, 0.15)';
+                ctx.lineWidth = 1;
+
+                for (let i = 0; i <= 64; i++) {
+                    const pos = i * MAGNIFICATION;
+                    ctx.beginPath();
+                    ctx.moveTo(pos, 0);
+                    ctx.lineTo(pos, 512);
+                    ctx.stroke();
+                    ctx.beginPath();
+                    ctx.moveTo(0, pos);
+                    ctx.lineTo(512, pos);
+                    ctx.stroke();
+                }
+            }
+
+            // Make functions accessible
+            window.openFullscreen = openFullscreen;
+        }
+
+        // Constantes
+        const MAGNIFICATION = 8;
+        const SPINDA_COLOR = { r: 175, g: 222, b: 107, a: 57 };
+        const BASE_COORDS = [0, 0, 24, 1, 6, 18, 18, 19];
+        const ORIGIN = [8, 6];
+
+        // Variables globales
+        let pid = generateRandomPid();
+        let showGrid = false;
+        let spots = Array(4).fill().map(() => ({ x: 0, y: 0 }));
+        let draggingSpot = null;
+        let mouseOffset = { x: 0, y: 0 };
+        let lower = new Array(8);
+        let upper = new Array(8);
+
+        // Referencias a elementos
+        const baseCanvas = document.getElementById('baseCanvas');
+        const gridCanvas = document.getElementById('gridCanvas');
+        const resultCanvas = document.getElementById('resultCanvas');
+        const pidInput = document.getElementById('pidInput');
+        const gridCheck = document.getElementById('gridCheck');
+        const canvasContainer = document.getElementById('canvasContainer');
+        const spotElements = [
+            document.getElementById('spot1'),
+            document.getElementById('spot2'),
+            document.getElementById('spot3'),
+            document.getElementById('spot4')
+        ];
+
+        // Obtener escala actual del contenedor
+        function getContainerScale() {
+            const containerWidth = canvasContainer.offsetWidth;
+            return containerWidth / 512;
+        }
+
+        // Inicializar límites
+        function initLimits() {
+            for (let i = 0; i < 4; i++) {
+                lower[2 * i] = (BASE_COORDS[2 * i] + ORIGIN[0]) * MAGNIFICATION;
+                lower[2 * i + 1] = (BASE_COORDS[2 * i + 1] + ORIGIN[1]) * MAGNIFICATION;
+                upper[2 * i] = (15 + BASE_COORDS[2 * i] + ORIGIN[0]) * MAGNIFICATION;
+                upper[2 * i + 1] = (15 + BASE_COORDS[2 * i + 1] + ORIGIN[1]) * MAGNIFICATION;
+            }
+        }
+
+        async function drawBaseSpinda() {
+            const baseCtx = baseCanvas.getContext('2d');
+            const img = new Image();
+            img.src = SPINDA_ASSETS.baseSpinda;
+            await new Promise(resolve => img.onload = resolve);
+            baseCtx.clearRect(0, 0, 64, 64);
+            baseCtx.drawImage(img, 0, 0, 64, 64);
+        }
+
+        function drawGrid() {
+            const ctx = gridCanvas.getContext('2d');
+            ctx.clearRect(0, 0, 512, 512);
+            if (!showGrid) return;
+
+            const theme = document.body.getAttribute('data-theme');
+            ctx.strokeStyle = theme === 'dark' ? 'rgba(255, 255, 255, 0.15)' : 'rgba(0, 0, 0, 0.1)';
+            ctx.lineWidth = 1;
+
+            for (let i = 0; i < 64; i++) {
+                const x = i * MAGNIFICATION;
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, 512);
+                ctx.stroke();
+            }
+
+            for (let i = 0; i < 64; i++) {
+                const y = i * MAGNIFICATION;
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(512, y);
+                ctx.stroke();
+            }
+        }
+
+        async function drawResult() {
+            const ctx = resultCanvas.getContext('2d');
+            ctx.clearRect(0, 0, 64, 64);
+
+            const baseImg = new Image();
+            baseImg.src = SPINDA_ASSETS.baseSpinda;
+            await new Promise(resolve => baseImg.onload = resolve);
+            ctx.drawImage(baseImg, 0, 0, 64, 64);
+
+            ctx.globalCompositeOperation = 'source-atop';
+
+            const spotImages = await Promise.all([
+                loadImage(SPINDA_ASSETS.spotResult1),
+                loadImage(SPINDA_ASSETS.spotResult2),
+                loadImage(SPINDA_ASSETS.spotResult3),
+                loadImage(SPINDA_ASSETS.spotResult4)
+            ]);
+
+            spots.forEach((spot, i) => {
+                const x = Math.floor(spot.x / MAGNIFICATION);
+                const y = Math.floor(spot.y / MAGNIFICATION);
+                ctx.drawImage(spotImages[i], x, y);
+            });
+
+            ctx.globalCompositeOperation = 'source-over';
+        }
+
+        function setSpot(spotElement, index) {
+            const xOffset = (parseInt(pid, 16) >> (index * 8)) & 0x0F;
+            const yOffset = (parseInt(pid, 16) >> (index * 8 + 4)) & 0x0F;
+
+            const x = (xOffset + BASE_COORDS[2 * index] + ORIGIN[0]) * MAGNIFICATION;
+            const y = (yOffset + BASE_COORDS[2 * index + 1] + ORIGIN[1]) * MAGNIFICATION;
+
+            spotElement.style.left = (x / 512 * 100) + '%';
+            spotElement.style.top = (y / 512 * 100) + '%';
+            spotElement.style.backgroundImage = `url(${SPINDA_ASSETS['spot' + (index + 1)]})`;
+
+            spots[index] = { x, y };
+        }
+
+        function handleMouseDown(e, index) {
+            if (e.button === 0) {
+                const scale = getContainerScale();
+                const containerRect = canvasContainer.getBoundingClientRect();
+                draggingSpot = index;
+                const spotX = parseFloat(spotElements[index].style.left) / 100 * 512 * scale;
+                const spotY = parseFloat(spotElements[index].style.top) / 100 * 512 * scale;
+                mouseOffset = {
+                    x: e.clientX - containerRect.left - spotX,
+                    y: e.clientY - containerRect.top - spotY
+                };
+            }
+        }
+
+        function handleMouseMove(e) {
+            if (draggingSpot === null) return;
+
+            const scale = getContainerScale();
+            const spot = spotElements[draggingSpot];
+            const containerRect = canvasContainer.getBoundingClientRect();
+
+            let x = (e.clientX - containerRect.left - mouseOffset.x) / scale;
+            let y = (e.clientY - containerRect.top - mouseOffset.y) / scale;
+
+            x = Math.floor(x / MAGNIFICATION) * MAGNIFICATION;
+            y = Math.floor(y / MAGNIFICATION) * MAGNIFICATION;
+
+            x = Math.max(lower[draggingSpot * 2], Math.min(upper[draggingSpot * 2], x));
+            y = Math.max(lower[draggingSpot * 2 + 1], Math.min(upper[draggingSpot * 2 + 1], y));
+
+            spot.style.left = (x / 512 * 100) + '%';
+            spot.style.top = (y / 512 * 100) + '%';
+            spots[draggingSpot] = { x, y };
+
+            updatePIDFromSpots();
+            drawResult();
+            updateNatureText();
+        }
+
+        function handleMouseUp() {
+            draggingSpot = null;
+        }
+
+        function handleTouchStart(e, index) {
+            e.preventDefault();
+            const touch = e.touches[0];
+            const scale = getContainerScale();
+            const containerRect = canvasContainer.getBoundingClientRect();
+            draggingSpot = index;
+            const spotX = parseFloat(spotElements[index].style.left) / 100 * 512 * scale;
+            const spotY = parseFloat(spotElements[index].style.top) / 100 * 512 * scale;
+            mouseOffset = {
+                x: touch.clientX - containerRect.left - spotX,
+                y: touch.clientY - containerRect.top - spotY
+            };
+        }
+
+        function handleTouchMove(e) {
+            if (draggingSpot === null) return;
+            e.preventDefault();
+
+            const touch = e.touches[0];
+            const scale = getContainerScale();
+            const spot = spotElements[draggingSpot];
+            const containerRect = canvasContainer.getBoundingClientRect();
+
+            let x = (touch.clientX - containerRect.left - mouseOffset.x) / scale;
+            let y = (touch.clientY - containerRect.top - mouseOffset.y) / scale;
+
+            x = Math.floor(x / MAGNIFICATION) * MAGNIFICATION;
+            y = Math.floor(y / MAGNIFICATION) * MAGNIFICATION;
+
+            x = Math.max(lower[draggingSpot * 2], Math.min(upper[draggingSpot * 2], x));
+            y = Math.max(lower[draggingSpot * 2 + 1], Math.min(upper[draggingSpot * 2 + 1], y));
+
+            spot.style.left = (x / 512 * 100) + '%';
+            spot.style.top = (y / 512 * 100) + '%';
+            spots[draggingSpot] = { x, y };
+
+            updatePIDFromSpots();
+            drawResult();
+            updateNatureText();
+        }
+
+        function handleTouchEnd() {
+            draggingSpot = null;
+        }
+
+        function updatePIDFromSpots() {
+            let newPID = 0n;
+
+            spots.forEach((spot, index) => {
+                const x = Math.floor(spot.x / MAGNIFICATION);
+                const y = Math.floor(spot.y / MAGNIFICATION);
+
+                const xOffset = x - (BASE_COORDS[index * 2] + ORIGIN[0]);
+                const yOffset = y - (BASE_COORDS[index * 2 + 1] + ORIGIN[1]);
+
+                const shift = BigInt(index * 8);
+                newPID |= BigInt(xOffset & 0x0F) << shift;
+                newPID |= BigInt(yOffset & 0x0F) << (shift + 4n);
+            });
+
+            pid = cleanPid(newPID.toString(16));
+            pidInput.value = pid;
+        }
+
+        function handlePIDInput(e) {
+            const newPid = e.target.value;
+            pid = newPid;
+
+            if (!isPidValid(newPid)) {
+                return;
+            }
+
+            drawSpindaBasedOnPid(newPid, e.target);
+        }
+
+        function handlePIDBlur(e) {
+            if (isPidValid(pid)) {
+                return;
+            }
+
+            drawSpindaBasedOnPid(pid, e.target);
+        }
+
+        function drawSpindaBasedOnPid(newPid, target) {
+            newPid = cleanPid(newPid);
+            target.value = newPid;
+
+            if (newPid.length > 8) {
+                return;
+            }
+
+            pid = newPid;
+            spotElements.forEach((spot, index) => setSpot(spot, index));
+            drawResult();
+            updateNatureText();
+        }
+
+        function handleGridToggle(e) {
+            showGrid = e.target.checked;
+            drawGrid();
+        }
+
+        function updateNatureText() {
+            const pidNum = parseInt(pid, 16);
+            const lang = currentLanguage;
+
+            const nature = TRANSLATIONS[lang].natures[pidNum % 25];
+            const gender = (pidNum & 0xff) < 0x7f ?
+                TRANSLATIONS[lang].genders.female :
+                TRANSLATIONS[lang].genders.male;
+            const ability = (pidNum & 1) === 0 ?
+                TRANSLATIONS[lang].abilities.ownTempo1 :
+                TRANSLATIONS[lang].abilities.ownTempo2;
+
+            document.getElementById('natureNameText').textContent = nature.name;
+            document.getElementById('genderText').textContent = gender;
+            document.getElementById('abilityText').textContent = ability;
+        }
+
+        function loadImage(src) {
+            return new Promise((resolve) => {
+                const img = new Image();
+                img.onload = () => resolve(img);
+                img.src = src;
+            });
+        }
+
+        function setupEventListeners() {
+            spotElements.forEach((spot, index) => {
+                spot.addEventListener('mousedown', (e) => handleMouseDown(e, index));
+                spot.addEventListener('touchstart', (e) => handleTouchStart(e, index));
+            });
+            document.addEventListener('mousemove', handleMouseMove);
+            document.addEventListener('mouseup', handleMouseUp);
+            document.addEventListener('touchmove', handleTouchMove, { passive: false });
+            document.addEventListener('touchend', handleTouchEnd);
+            document.addEventListener('touchcancel', handleTouchEnd);
+
+            pidInput.addEventListener('input', handlePIDInput);
+            pidInput.addEventListener('blur', handlePIDBlur);
+            gridCheck.addEventListener('change', handleGridToggle);
+
+            spotElements.forEach(spot => {
+                spot.addEventListener('dragstart', (e) => e.preventDefault());
+            });
+        }
+
+        async function preloadImages() {
+            const imagePromises = [
+                loadImage(SPINDA_ASSETS.baseSpinda),
+                loadImage(SPINDA_ASSETS.spot1),
+                loadImage(SPINDA_ASSETS.spot2),
+                loadImage(SPINDA_ASSETS.spot3),
+                loadImage(SPINDA_ASSETS.spot4),
+                loadImage(SPINDA_ASSETS.spotResult1),
+                loadImage(SPINDA_ASSETS.spotResult2),
+                loadImage(SPINDA_ASSETS.spotResult3),
+                loadImage(SPINDA_ASSETS.spotResult4)
+            ];
+
+            await Promise.all(imagePromises);
+        }
+
+        async function initSpindaPainter() {
+            try {
+                initLimits();
+                await preloadImages();
+                await drawBaseSpinda();
+                spotElements.forEach((spot, index) => setSpot(spot, index));
+                setupEventListeners();
+                drawGrid();
+                await drawResult();
+                pidInput.value = pid;
+                gridCheck.checked = showGrid;
+                updateNatureText();
+            } catch (error) {
+                console.error('Error initializing Spinda Painter:', error);
+            }
+        }
+
+        window.addEventListener('load', initSpindaPainter);
+    </script>
+</body>
+</html>

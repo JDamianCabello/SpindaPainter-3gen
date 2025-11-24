@@ -1,0 +1,21 @@
+{
+    "name": "Spinda Painter",
+    "short_name": "Spinda",
+    "icons": [
+      {
+        "src": "assets/images/android-chrome-192x192.png",
+        "sizes": "192x192",
+        "type": "image/png"
+      },
+      {
+        "src": "assets/images/android-chrome-512x512.png",
+        "sizes": "512x512",
+        "type": "image/png"
+      }
+    ],
+    "theme_color": "#D86226",
+    "background_color": "#f4f6f9",
+    "display": "standalone",
+    "start_url": "/",
+    "description": "Una herramienta web para personalizar y explorar los únicos patrones de manchas de Spinda en Pokémon."
+  }
